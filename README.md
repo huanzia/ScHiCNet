@@ -44,7 +44,7 @@ The Drosophila Hi-C data (GEO accession number: GSE131811) can be accessed at \u
 ~~~bash
 Step 1: Navigate to the project directory.
 cd ./Training
-Step 2:
+Step 2: Training your data.
 python schicnet_train.py
 ~~~
 -  `-b`: --batch size
