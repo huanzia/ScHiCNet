@@ -11,18 +11,16 @@ import Models.schicnet as schicnet
 # import Models.hicplus as hicplus
 # import Models.ScHiCAtt as ScHiCAtt
 
-# 小鼠是162511
-# Human and Dros 是162511
-# ===================== 可配参数 ======================
-cell_lin = "Mouse"  # 例如 "Human"
+
+cell_lin = "Mouse" 
 model_cell_line = "Human"
-cell_not =  15 # 例如 1（数字）
-percent = 0.75  # 降采样比例（与你的数据目录一致）
+cell_not =  1
+percent = 0.75 
 file_inter = f'Downsample_{percent}_{cell_lin}{cell_not}/'
 plot_cell_not = 7
 plot_file_inter = f'Downsample_{percent}_{model_cell_line}{plot_cell_not}/'
 
-# ===================== 公共工具 =====================
+# ===================== public tools =====================
 def load_weights(model: torch.nn.Module, weights_path: str, device: torch.device):
     ckpt = torch.load(weights_path, map_location=device)
     state = ckpt['state_dict'] if isinstance(ckpt, dict) and 'state_dict' in ckpt else ckpt
@@ -53,7 +51,7 @@ def predict_on_splits(model, split_path, device, batch_size=64):
 
 
 def _make_weight_window(P: int, mode: str = "hann") -> np.ndarray:
-    """生成二维权重窗（用于重叠区域平滑）。"""
+  
     if mode == "uniform":
         W = np.ones((P, P), dtype=np.float32)
     elif mode == "hann":
@@ -79,7 +77,7 @@ def _infer_stride_from_blocks(H, W, out_h, out_w, N, prefer_leq=None):
     if N <= 0:
         raise ValueError("N (num blocks) must be positive")
     candidates = []
-    # 枚举因子
+  
     for n_rows in range(1, int(np.sqrt(N)) + 1):
         if N % n_rows != 0:
             continue
@@ -143,7 +141,7 @@ def combine_blocks_overlap(
     N = blocks.shape[0]
     Nh, Nw = blocks.shape[-2], blocks.shape[-1]
 
-    # 如果块的尺寸不是目标尺寸，直接按原尺寸拼接
+ 
     if Nh != out_h or Nw != out_w:
         out_h, out_w = Nh, Nw
 
@@ -156,9 +154,9 @@ def combine_blocks_overlap(
     expected_N = n_rows * n_cols
     if expected_N != N:
         print(
-            f"[INFO] stride={stride} 推导网格 {n_rows}x{n_cols}={expected_N} 与 N={N} 不同，将以 min(N, expected_N) 为准")
+            f"[INFO] stride={stride} infer {n_rows}x{n_cols}={expected_N} and N={N} is different，then min(N, expected_N) ")
 
-    # 权重窗（用于重叠处加权；无重叠时等价于 1）
+  
     Wwin = _make_weight_window(out_h, mode=weight_mode).astype(np.float32)
     if out_w != out_h:
         Wx = _make_weight_window(out_w, mode=weight_mode).astype(np.float32)
@@ -255,7 +253,7 @@ MODEL_REGISTRY = [
         "chromosomes": CHROMS_DEFAULT,
         "split_npy_fmt": SPLIT_FMT_DEFAULT,
         "full_mat_fmt": FULL_FMT_DEFAULT,
-        "out_shrink": 12,  # 关键：有效卷积少 12 像素
+        "out_shrink": 12, 
     },
     # ===== deephic =====
     {
@@ -290,7 +288,7 @@ MODEL_REGISTRY = [
 ]
 
 
-# ===================== 主流程 =====================
+# ===================== main =====================
 def run_one_model(cfg, device):
     model_id = cfg["model_id"]
     data_root = cfg["data_root"]
@@ -303,7 +301,7 @@ def run_one_model(cfg, device):
     split_fmt = cfg["split_npy_fmt"]
     full_fmt = cfg["full_mat_fmt"]
 
-    print(f"\n==== [{model_id}] 构建与加载 ====")
+    print(f"\n==== [{model_id}] loading ====")
     model = cfg["build_model"](device)
     if weights_path and os.path.isfile(weights_path):
         print(f"[{model_id}] 加载权重: {weights_path}")
@@ -336,7 +334,7 @@ def run_one_model(cfg, device):
         )
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         np.save(save_path, full_pred)
-        print(f"[✔] [{model_id}] Chr{chr_id} 预测完成 → {save_path}")
+        print(f"[✔] [{model_id}] Chr{chr_id} predicted finshed → {save_path}")
 
 
 def main():
@@ -346,8 +344,9 @@ def main():
         try:
             run_one_model(cfg, device)
         except Exception as e:
-            print(f"[!] 模型 {cfg.get('model_id')} 运行失败：{e}")
+            print(f"[!] model {cfg.get('model_id')} failed：{e}")
 
 
 if __name__ == "__main__":
     main()
+
