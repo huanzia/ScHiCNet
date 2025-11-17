@@ -18,32 +18,19 @@ from ProcessData.PrepareData_tensorH import GSE130711Module
 # import Models.hicsr as hicsr
 # import Models.ScHiCAtt as ScHiCAtt
 import Models.schicnet as schicnet
-
-# --- 配置区 ---
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-# 绝缘分数计算模块
 getIns = ins.computeInsulation().to(device)
-
-# --- 测试参数设置 ---
 RES = 40000
 PIECE_SIZE = 40
-CELL_LIN = "Human"  # 当前要测试的数据集
-CELL_NO = 1  # 当前要测试的细胞编号
+CELL_LIN = "Human" 
+CELL_NO = 1  
 PERCENTAGE = 0.75
+PRETRAINED_CELL_LINT = "Human"
+PRETRAINED_CELL_NOT = 1  
 
-# --- 预训练模型路径参数 ---
-PRETRAINED_CELL_LINT = "Human"  # 用于构建路径的细胞系
-PRETRAINED_CELL_NOT = 1  # 用于构建路径的细胞编号
-
-# 染色体配置
 chros_all = [2, 6, 10, 12] if CELL_LIN == "Human" else [2, 6]
-
-# --- 加载所有模型  ---
 print("Loading all models...")
-# 根据指定的预训练模型来源构建路径
 file_inter = f"Downsample_{PERCENTAGE}_{PRETRAINED_CELL_LINT}{PRETRAINED_CELL_NOT}/"
-
 
 # schicedrn_model = schicedrn.Generator().to(device)
 # schicedrn_path = f"../pretrained/{file_inter}bestg_40kb_c40_s40_{PRETRAINED_CELL_LINT}{PRETRAINED_CELL_NOT}_hiedsrgan.pytorch"
@@ -85,7 +72,7 @@ print("All models loaded successfully.")
 
 
 def filterNum(arr1):
-    """过滤计算中可能出现的 inf 和 nan 值"""
+    """inf and nan value"""
     arr1 = np.array(arr1)
     arr1[arr1 == inf] = 0
     arr1[arr1 == -inf] = 0
@@ -93,11 +80,10 @@ def filterNum(arr1):
     return arr2
 
 
-# 用于存储每个模型在所有染色体上的最终得分
+
 final_scores = {model_name: [] for model_name in models.keys()}
 final_scores['Downsampled'] = []
 
-# --- 主循环：按染色体进行评估 ---
 for CHRO in chros_all:
     print(f"\nProcessing Chromosome {CHRO}...")
 
@@ -155,14 +141,14 @@ print("\n==============================================")
 print(f"  Final Average Results for {CELL_LIN} cell {CELL_NO} @ {PERCENTAGE * 100}% ")
 print("==============================================")
 print("Note: Lower scores are better.")
-# 对结果进行排序，以便更好地查看
+
 sorted_scores_avg = sorted(final_scores.items(), key=lambda item: np.mean(item[1]))
 for model_name, scores in sorted_scores_avg:
     avg_score = np.mean(scores)
     print(f"Average {model_name} L2 Norm Diff: {avg_score:.4f}")
 print("==============================================")
 
-# --- 将结果写入文件 ---
+
 outdir = "../Insolation_score_results"
 os.makedirs(outdir, exist_ok=True)
 outfile = f"{outdir}/comparison_{CELL_LIN}{CELL_NO}_{PERCENTAGE}.txt"
@@ -174,11 +160,11 @@ with open(outfile, "w") as results_file:
         results_file.write(f"{model_name}\t{avg_score:.4f}\n")
 
     results_file.write("\n\n--- Per-Chromosome Scores ---\n")
-    # 按字典原始顺序写入表头，方便对齐
+
     header = "Chromosome\t" + "\t".join(final_scores.keys()) + "\n"
     results_file.write(header)
     for i, chro in enumerate(chros_all):
-        # 按字典原始顺序写入每行分数
+     
         scores_line = [f"{final_scores[model_name][i]:.4f}" for model_name in final_scores.keys()]
         results_file.write(f"{chro}\t" + "\t".join(scores_line) + "\n")
 
