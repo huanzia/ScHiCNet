@@ -26,17 +26,14 @@ class SelectiveKernelFusion(nn.Module):
         feats = [x3, x5, x7]
         stack = torch.stack(feats, dim=1)  # B x 3 x C x H x W
 
-        # 全局描述子
         U = sum(feats)
         s = self.global_pool(U)  # B x C x 1 x 1
         z = self.fc(s)           # B x C//reduction x 1 x 1
 
-        # 为每个分支生成权重
         weights = [fc(z) for fc in self.fcs]  # List[B x C x 1 x 1]
         weights = torch.stack(weights, dim=1)  # B x 3 x C x 1 x 1
         weights = self.softmax(weights)       # B x 3 x C x 1 x 1
 
-        # 融合
         out = (stack * weights).sum(dim=1)
         return out
 
@@ -68,7 +65,7 @@ class SpatialAttention(nn.Module):
         max_ = torch.max(x, dim=1, keepdim=True)[0]
         y = torch.cat([avg, max_], dim=1)
         y = self.conv(y)
-        return self.sigmoid(y)  # ✅ 只输出注意力图
+        return self.sigmoid(y)  
 
 
 # ---- Lightweight Self Attention ----
@@ -109,10 +106,10 @@ class EnhancedBlock(nn.Module):
         res = self.conv2(res)
 
         ca_weight = self.ca(res)
-        res = res * ca_weight  # 通道加权
+        res = res * ca_weight  
 
         sa_weight = self.sa(res)
-        res = res * sa_weight  # 空间加权
+        res = res * sa_weight 
 
         res = self.attn(res)
         return x + res * self.res_scale
@@ -152,3 +149,4 @@ class schicnet_Block(nn.Module):
         res = self.body(x)
         out = self.tail(res + x)
         return out
+
