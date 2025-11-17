@@ -34,7 +34,7 @@ class schicnet_trainer:
 
         # you con record your experiment using wandb
         # wandb.init(
-        #     project='edsrv6',
+        #     project='schicnet',
         #     settings=wandb.Settings(init_timeout=150)  # Set to 120 seconds or higher
         # )
 
@@ -165,3 +165,4 @@ if __name__ == "__main__":
     trainer = schicnet_trainer(epoch=300, batch_s=1, cellN=1, percentage=0.75, celline='Mouse')
     trainer.fit_model()
     print("\nTraining complete.\n")
+
