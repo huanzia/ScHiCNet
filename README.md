@@ -45,7 +45,7 @@ ScHiCNet/
 ├── Training/     # Main training scripts (contains schicnet_train.py)
 ├── Utils/        # Utility functions for data loading, metrics, and visualization
 └── experi/       # Configuration files and scripts for specific experiments
-
+```
 
 ## Data Preparation
 The Drosophila Hi-C data (GEO accession number: GSE131811) can be accessed at \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131811}. The human Hi-C data (GEO accession number: GSE130711) was downloaded from \url{https://salkinstitute.app.box.com/s/fp63a4j36m5k255dhje3zcj5kfuzkyj1}. The Mouse Hi-C data (GEO accession number: GSE162511) can be accessed at \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE162511}.
