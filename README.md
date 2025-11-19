@@ -47,8 +47,10 @@ cd ./Training
 Step 2: Training your data.
 python schicnet_train.py
 ~~~
--  `-b`: --batch size
--  `-l`: celline
--  `n` :  cell number
--  `-e` : epoch
--  `-p` : percent
+**Arguments:**
+
+* `-b` (`--batch_size`): Batch size for training (e.g., 16).
+* `-l` (`--cell_line`): Name of the cell line (e.g., Mouse,Human,Dros).
+* `-n` (`--cell_number`): The specific cell index or ID to process(e.g.,1).
+* `-e` (`--epochs`): Total number of training epochs(e.g.,300).
+* `-p` (`--percent`): The sampling ratio(e.g.,0.75,0.45,0.1).
