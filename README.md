@@ -14,17 +14,17 @@ The ScHiCNet architecture diagram is shown below:
 ScHiCNet is written in Python3 with PyTorch framework. It demands Python version 3.8+
 Other python packages used in this repo (version numbers are recommended):
 -
--pytorch 2.4.1
--pytorch-lightning 1.0.3
--torchvision 0.19.1
--numpy 1.23.5
--scipy 1.5.2
--pandas 1.1.3
--scikit-learn 1.3.2
--h5py 3.11.0
--cooler 0.8.11
--pyfaidx 0.8.1.3
--pypairix 0.3.9
+- pytorch 2.4.1
+- pytorch-lightning 1.0.3
+- torchvision 0.19.1
+- numpy 1.23.5
+- scipy 1.5.2
+- pandas 1.1.3
+- scikit-learn 1.3.2
+- h5py 3.11.0
+- cooler 0.8.11
+- pyfaidx 0.8.1.3
+- pypairix 0.3.9
 -networkx 3.1
 -matplotlib 3.3.2
 -tensorboard 2.14.0
