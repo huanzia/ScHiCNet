@@ -25,12 +25,12 @@ Other python packages used in this repo (version numbers are recommended):
 - cooler 0.8.11
 - pyfaidx 0.8.1.3
 - pypairix 0.3.9
--networkx 3.1
--matplotlib 3.3.2
--tensorboard 2.14.0
--tqdm 4.51.0
--pyyaml 6.0.2
--For details, see the schicnet_cu126.yml file.
+- networkx 3.1
+- matplotlib 3.3.2
+- tensorboard 2.14.0
+- tqdm 4.51.0
+- pyyaml 6.0.2
+- For details, see the schicnet_cu126.yml file.
 
 > Note: GPU acceleration (CUDA 12) is strongly recommended.
 
