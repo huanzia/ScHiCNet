@@ -13,7 +13,7 @@ The ScHiCNet architecture diagram is shown below:
 ## Dependency
 ScHiCNet is written in Python3 with PyTorch framework. It demands Python version 3.8+
 Other python packages used in this repo (version numbers are recommended):
-
+-
 -pytorch 2.4.1
 -pytorch-lightning 1.0.3
 -torchvision 0.19.1
