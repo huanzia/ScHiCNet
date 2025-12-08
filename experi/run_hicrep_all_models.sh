@@ -5,8 +5,11 @@ MODEL_NAMES=("ScHiCEDRN" "DeepHiC" "HiCSR" "ScHiCAtt" "SCHiCNet")
 
 CELL_LIN="Dros"
 PERCENTAGE="0.1"
-BASE_INPUT_DIR="/home/Work_Project/ScHiCNet/hicqc_inputs"
-BASE_OUTPUT_DIR="/home/Work_Project/ScHiCNet/hicqc_results_all"
+
+# Use relative paths. Assumes script is run from project root or 'experi' dir.
+# Ideally, run from project root as: ./experi/run_hicrep_all_models.sh
+BASE_INPUT_DIR="./hicqc_inputs"
+BASE_OUTPUT_DIR="./hicqc_results_all"
 
 SUMMARY_FILE="hicrep_all_models_summary_Dros_0.1.csv"
 
