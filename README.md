@@ -1,38 +1,54 @@
 # ScHiCNet: A Multi-Scale Feature-Guided Attention Framework for Enhancing Single-Cell Hi-C Data
-ScHiCNet is a deep learning model designed to enhance the resolution and accuracy of single-cell Hi-C data for studying chromatin interactions.
 
-## Summary
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/pytorch-2.4.1-orange)](https://pytorch.org/)
 
+## Overview
 
-ScHiCNet is a deep learning model designed to enhance single-cell Hi-C (scHi-C) data by improving its resolution and accuracy. It utilizes multi-scale convolutions and attention mechanisms to recover chromatin interaction maps, outperforming existing methods in structural similarity and biological reproducibility across species like human, mouse, and Drosophila. ScHiCNet is a powerful tool for advancing genomic research on chromatin organization.
+**ScHiCNet** is a deep learning framework designed to enhance the resolution and quality of single-cell Hi-C (scHi-C) contact matrices. By leveraging multi-scale feature extraction and attention-guided mechanisms, ScHiCNet effectively recovers chromatin interaction details from sparse and noisy scHi-C data.
 
+It outperforms existing methods in terms of:
+- **Structural Similarity (SSIM)**
+- **Peak Signal-to-Noise Ratio (PSNR)**
+- **Biological Reproducibility (HiCRep, GenomeDISCO)**
+- **Cross-species Generalization** (Robust performance across Human, Mouse, and Drosophila)
 
-The ScHiCNet architecture diagram is shown below:
-<img width="889" height="670" alt="arh" src="https://github.com/user-attachments/assets/435bbde8-6482-4d05-84a0-b5bef20eec78" />
+The architecture diagram of ScHiCNet is shown below:
+![Model Architecture](https://github.com/user-attachments/assets/435bbde8-6482-4d05-84a0-b5bef20eec78)
 
-## Dependency
-ScHiCNet is written in Python3 with PyTorch framework. It demands Python version 3.8+
-Other python packages used in this repo (version numbers are recommended):
--
-- pytorch 2.4.1
-- pytorch-lightning 1.0.3
-- torchvision 0.19.1
-- numpy 1.23.5
-- scipy 1.5.2
-- pandas 1.1.3
-- scikit-learn 1.3.2
-- h5py 3.11.0
-- cooler 0.8.11
-- pyfaidx 0.8.1.3
-- pypairix 0.3.9
-- networkx 3.1
-- matplotlib 3.3.2
-- tensorboard 2.14.0
-- tqdm 4.51.0
-- pyyaml 6.0.2
-- For details, see the schicnet_cu126.yml file.
+---
 
-> Note: GPU acceleration (CUDA 12) is strongly recommended.
+## 🛠️ System Requirements
+
+- **OS**: Linux (Recommended) or Windows
+- **Python**: 3.8+
+- **CUDA**: 11.x / 12.x (Strongly recommended for GPU acceleration)
+
+### Core Dependencies
+Based on our `schicnet_cu126.yml` configuration:
+- PyTorch >= 2.4.0
+- PyTorch Lightning
+- NumPy, SciPy, Pandas
+- Cooler, h5py
+- Matplotlib, Seaborn
+
+---
+
+## 🚀 Installation
+
+We strictly recommend using `conda` to ensure all CUDA dependencies are correctly installed.
+
+```bash
+# 1. Clone the repository
+git clone [https://github.com/huanzia/ScHiCNet.git](https://github.com/huanzia/ScHiCNet.git)
+cd ScHiCNet
+
+# 2. Create environment from the provided YAML file
+conda env create -f schicnet_cu126.yml
+
+# 3. Activate the environment
+conda activate schicnet_cu126
 
 ## Project Structure
 
@@ -47,8 +63,15 @@ ScHiCNet/
 └── experi/       # Configuration files and scripts for specific experiments
 ```
 
-## Data Preparation
-The Drosophila Hi-C data (GEO accession number: GSE131811) can be accessed at \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131811}. The human Hi-C data (GEO accession number: GSE130711) was downloaded from \url{https://salkinstitute.app.box.com/s/fp63a4j36m5k255dhje3zcj5kfuzkyj1}. The Mouse Hi-C data (GEO accession number: GSE162511) can be accessed at \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE162511}.
+## 📖 Data Preparation
+
+ScHiCNet accepts Hi-C data in **`.mcool`** format (multiresolution cooler files).
+
+### Public Datasets
+The datasets used in our paper can be downloaded from:
+- **Drosophila**: [GSE131811](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131811)
+- **Human**: [GSE130711](https://salkinstitute.app.box.com/s/fp63a4j36m5k255dhje3zcj5kfuzkyj1)
+- **Mouse**: [GSE162511](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE162511)
 
 
 ## Running ScHiCNet
