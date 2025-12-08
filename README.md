@@ -26,19 +26,19 @@ The architecture diagram of ScHiCNet is shown below:
 - **CUDA**: 11.x / 12.x (Strongly recommended for GPU acceleration)
 
 ### Core Dependencies
-Based on our `schicnet_cu126.yml` configuration:
-- PyTorch >= 2.4.0
-- PyTorch Lightning
-- NumPy, SciPy, Pandas
+- PyTorch >= 2.0.0
+- NumPy >= 1.23.5
+- SciPy, Pandas, Matplotlib
 - Cooler, h5py
-- Matplotlib, Seaborn
+- PyTorch Lightning
 
 ---
 
 ## 🚀 Installation
 
-We strictly recommend using `conda` to ensure all CUDA dependencies are correctly installed.
+You can set up the environment using `conda` (recommended) or `pip`.
 
+### Option 1: Using Conda (Recommended)
 ```bash
 # 1. Clone the repository
 git clone [https://github.com/huanzia/ScHiCNet.git](https://github.com/huanzia/ScHiCNet.git)
