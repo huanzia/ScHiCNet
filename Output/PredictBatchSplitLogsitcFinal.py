@@ -11,16 +11,16 @@ import Models.schicnet as schicnet
 # import Models.hicplus as hicplus
 # import Models.ScHiCAtt as ScHiCAtt
 
-
+# ---------------- Configuration ----------------
 cell_lin = "Mouse" 
 model_cell_line = "Human"
-cell_not =  1
+cell_not = 1
 percent = 0.75 
 file_inter = f'Downsample_{percent}_{cell_lin}{cell_not}/'
 plot_cell_not = 7
 plot_file_inter = f'Downsample_{percent}_{model_cell_line}{plot_cell_not}/'
 
-# ===================== public tools =====================
+# ===================== Public Tools =====================
 def load_weights(model: torch.nn.Module, weights_path: str, device: torch.device):
     ckpt = torch.load(weights_path, map_location=device)
     state = ckpt['state_dict'] if isinstance(ckpt, dict) and 'state_dict' in ckpt else ckpt
@@ -31,10 +31,10 @@ def load_weights(model: torch.nn.Module, weights_path: str, device: torch.device
 
 def predict_on_splits(model, split_path, device, batch_size=64):
     """
- 
-    support (N,H,W) or (N,1,H,W) 
+    Run prediction on split data.
+    Supports input shapes (N,H,W) or (N,1,H,W).
     """
-    data_np = np.load(split_path)  # (N,C,H,W) 或 (N,H,W)
+    data_np = np.load(split_path)  # (N,C,H,W) or (N,H,W)
     data_tensor = torch.from_numpy(data_np).float().to(device)
     if data_tensor.ndim == 3:
         data_tensor = data_tensor.unsqueeze(1)  # -> (N,1,H,W)
@@ -51,7 +51,6 @@ def predict_on_splits(model, split_path, device, batch_size=64):
 
 
 def _make_weight_window(P: int, mode: str = "hann") -> np.ndarray:
-  
     if mode == "uniform":
         W = np.ones((P, P), dtype=np.float32)
     elif mode == "hann":
@@ -83,10 +82,10 @@ def _infer_stride_from_blocks(H, W, out_h, out_w, N, prefer_leq=None):
             continue
         n_cols = N // n_rows
 
-        # 反解行/列 stride 候选
+        # Reverse infer row/col stride candidates
         def infer_stride(L, k, out_k):
             if k == 1:
-                return max(1, L)  # 形同把唯一一块放起点
+                return max(1, L)  # Treat the single block as starting at origin
             s = (L - out_k) / float(k - 1)
             s_floor = max(1, int(np.floor(s)))
             calc_k = (L - out_k) // s_floor + 1
@@ -112,7 +111,9 @@ def _infer_stride_from_blocks(H, W, out_h, out_w, N, prefer_leq=None):
         if leq:
             return max(leq)
         return min(candidates, key=lambda s: abs(s - prefer_leq))
-    return min(candidates)  # 保守取最小的合法 stride
+    return min(candidates)  # Conservatively take the smallest valid stride
+
+
 def combine_blocks_overlap(
         blocks: np.ndarray,
         full_shape: tuple,
@@ -141,22 +142,20 @@ def combine_blocks_overlap(
     N = blocks.shape[0]
     Nh, Nw = blocks.shape[-2], blocks.shape[-1]
 
- 
     if Nh != out_h or Nw != out_w:
         out_h, out_w = Nh, Nw
 
     stride = _infer_stride_from_blocks(H, W, out_h, out_w, N, prefer_leq=block_size)
     if stride is None:
-        print(f"[WARN] 无法从 N={N} 推断 stride，退回 stride={out_h}（可能与原切片不一致）")
+        print(f"[WARN] Cannot infer stride from N={N}, fallback to stride={out_h} (may differ from original patches)")
         stride = out_h
     n_rows = (H - out_h) // stride + 1
     n_cols = (W - out_w) // stride + 1
     expected_N = n_rows * n_cols
     if expected_N != N:
         print(
-            f"[INFO] stride={stride} infer {n_rows}x{n_cols}={expected_N} and N={N} is different，then min(N, expected_N) ")
+            f"[INFO] stride={stride} infer {n_rows}x{n_cols}={expected_N} and N={N} is different, taking min(N, expected_N)")
 
-  
     Wwin = _make_weight_window(out_h, mode=weight_mode).astype(np.float32)
     if out_w != out_h:
         Wx = _make_weight_window(out_w, mode=weight_mode).astype(np.float32)
@@ -190,8 +189,12 @@ def combine_blocks_overlap(
     if symmetrize and H == W:
         canvas = 0.5 * (canvas + canvas.T)
     return canvas
+
+
 def ensure_dir(p):
     os.makedirs(p, exist_ok=True)
+
+
 def stem(path: str) -> str:
     return os.path.splitext(os.path.basename(path))[0]
 
@@ -205,21 +208,28 @@ def make_save_path(data_root: str, model_id: str, weights_path: str, split_path:
     filename = f"{split_stem}_predict-{model_id}_bs{block_size}_w{weights_stem}.npy"
     return os.path.join(out_dir, filename)
 
-DATA_ROOT_DEFAULT = f'/home/Work_Project/ScHiCNet/Training/DataFull_{cell_lin}_cell{cell_not}_{percent}_40000'
+# Dynamic path resolution
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+DATA_ROOT_DEFAULT = os.path.join(project_root, 'Training', f'DataFull_{cell_lin}_cell{cell_not}_{percent}_40000')
+
 SPLIT_FMT_DEFAULT = "{root}/Splits/GSE162511_full_chr_{chr_id}_40000_piece_{block}.npy"
 FULL_FMT_DEFAULT = "{root}/Full_Mats/GSE162511_mat_full_chr_{chr_id}_40000.npy"
+
 # CHROMS_DEFAULT = [1,2,3,4,5,6,10,12]
-# CHROMS_DEFAULT = [1,2,3,4,5,6]
-CHROMS_DEFAULT = [2,6,10,12]
+CHROMS_DEFAULT = [2, 6, 10, 12]
 BLOCK_SIZE_DEFAULT = 40
 BATCH_SIZE_DEFAULT = 64
 
+# Weight path resolution
+weights_dir = os.path.join(project_root, 'pretrained', plot_file_inter)
+
 MODEL_REGISTRY = [
-    # ===== schicnet =====
+    # ===== ScHiCNet =====
     {
         "model_id": "schicnet",
         "build_model": lambda device: schicnet.schicnet_Block().to(device),
-        "weights_path": f"../pretrained/{plot_file_inter}bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_schicnetNet.pth",
+        "weights_path": os.path.join(weights_dir, f"bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_schicnetNet.pth"),
         "data_root": DATA_ROOT_DEFAULT,
         "block_size": BLOCK_SIZE_DEFAULT,
         "batch_size": BATCH_SIZE_DEFAULT,
@@ -228,67 +238,10 @@ MODEL_REGISTRY = [
         "full_mat_fmt": FULL_FMT_DEFAULT,
         "out_shrink": 0,  # Hout = Hin
     },
-    '''
-    # ===== hiedsrgan =====
-    {
-        "model_id": "hiedsrgan",
-        "build_model": lambda device: hiedsr.Generator().to(device),
-        "weights_path": f"../pretrained/{plot_file_inter}bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_hiedsrgan.pytorch",
-        "data_root": DATA_ROOT_DEFAULT,
-        "block_size": BLOCK_SIZE_DEFAULT,
-        "batch_size": BATCH_SIZE_DEFAULT,
-        "chromosomes": CHROMS_DEFAULT,
-        "split_npy_fmt": SPLIT_FMT_DEFAULT,
-        "full_mat_fmt": FULL_FMT_DEFAULT,
-        "out_shrink": 0,  # Hout = Hin
-    },
-    # ===== hicsrNet（Hout = Hin - 12）=====
-    {
-        "model_id": "hicsrNet",
-        "build_model": lambda device: hicsr.Generator(num_res_blocks=15).to(device),
-        "weights_path": f"../pretrained/{plot_file_inter}bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_hicsrNet.pytorch",
-        "data_root": DATA_ROOT_DEFAULT,
-        "block_size": BLOCK_SIZE_DEFAULT,
-        "batch_size": BATCH_SIZE_DEFAULT,
-        "chromosomes": CHROMS_DEFAULT,
-        "split_npy_fmt": SPLIT_FMT_DEFAULT,
-        "full_mat_fmt": FULL_FMT_DEFAULT,
-        "out_shrink": 12, 
-    },
-    # ===== deephic =====
-    {
-        "model_id": "deephic",
-        "build_model": lambda device: deephic.Generator(scale_factor=1, in_channel=1, resblock_num=5).to(device),
-        "weights_path": f"../pretrained/{plot_file_inter}bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_deephic.pytorch",
-        "data_root": DATA_ROOT_DEFAULT,
-        "block_size": BLOCK_SIZE_DEFAULT,
-        "batch_size": BATCH_SIZE_DEFAULT,
-        "chromosomes": CHROMS_DEFAULT,
-        "split_npy_fmt": SPLIT_FMT_DEFAULT,
-        "full_mat_fmt": FULL_FMT_DEFAULT,
-        "out_shrink": 0,  # Hout = Hin
-    },
-   
-    {
-        "model_id": "schicatt",
-        "build_model": lambda device: ScHiCAtt.ScHiCAtt().to(device),
-        "weights_path": f"../pretrained/{plot_file_inter}bestg_40kb_c40_s40_{model_cell_line}{plot_cell_not}_ScHiCAtt.pth",
-        "data_root": DATA_ROOT_DEFAULT,
-        "block_size": BLOCK_SIZE_DEFAULT,
-        "batch_size": BATCH_SIZE_DEFAULT,
-        "chromosomes": CHROMS_DEFAULT,
-        "split_npy_fmt": SPLIT_FMT_DEFAULT,
-        "full_mat_fmt": FULL_FMT_DEFAULT,
-        "out_shrink": 0,  # Hout = Hin
-    },
-    '''
-
-
-
 ]
 
 
-# ===================== main =====================
+# ===================== Main =====================
 def run_one_model(cfg, device):
     model_id = cfg["model_id"]
     data_root = cfg["data_root"]
@@ -301,23 +254,23 @@ def run_one_model(cfg, device):
     split_fmt = cfg["split_npy_fmt"]
     full_fmt = cfg["full_mat_fmt"]
 
-    print(f"\n==== [{model_id}] loading ====")
+    print(f"\n==== [{model_id}] Loading ====")
     model = cfg["build_model"](device)
     if weights_path and os.path.isfile(weights_path):
-        print(f"[{model_id}] 加载权重: {weights_path}")
+        print(f"[{model_id}] Loading weights: {weights_path}")
         load_weights(model, weights_path, device)
     else:
-        print(f"[{model_id}] 未找到权重文件：{weights_path}")
+        print(f"[{model_id}] Weights file not found: {weights_path}")
 
     for chr_id in chroms:
         full_mat_path = full_fmt.format(root=data_root, chr_id=chr_id)
         split_path = split_fmt.format(root=data_root, chr_id=chr_id, block=block_size)
 
         if not os.path.isfile(full_mat_path):
-            print(f"[{model_id}] [Chr{chr_id}] 缺少 Full_Mat: {full_mat_path}（跳过）")
+            print(f"[{model_id}] [Chr{chr_id}] Missing Full_Mat: {full_mat_path} (Skipping)")
             continue
         if not os.path.isfile(split_path):
-            print(f"[{model_id}] [Chr{chr_id}] 缺少 Splits:   {split_path}（跳过）")
+            print(f"[{model_id}] [Chr{chr_id}] Missing Splits: {split_path} (Skipping)")
             continue
 
         full_shape = np.load(full_mat_path, mmap_mode='r').shape
@@ -334,7 +287,7 @@ def run_one_model(cfg, device):
         )
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         np.save(save_path, full_pred)
-        print(f"[✔] [{model_id}] Chr{chr_id} predicted finshed → {save_path}")
+        print(f"[✔] [{model_id}] Chr{chr_id} prediction finished -> {save_path}")
 
 
 def main():
@@ -344,9 +297,8 @@ def main():
         try:
             run_one_model(cfg, device)
         except Exception as e:
-            print(f"[!] model {cfg.get('model_id')} failed：{e}")
+            print(f"[!] Model {cfg.get('model_id')} failed: {e}")
 
 
 if __name__ == "__main__":
     main()
-
