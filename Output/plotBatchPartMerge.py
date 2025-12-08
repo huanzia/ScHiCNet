@@ -12,7 +12,8 @@ cell_no = 1
 crop_bin = 40
 cell_line = 'Human'
 
-base_dir = f'/home/Work_Project/ScHiCNet/Training/DataFull_{cell_line}_cell{cell_no}_{percent}_{res}'
+# base_dir = f'/home/Work_Project/ScHiCNet/Training/DataFull_{cell_line}_cell{cell_no}_{percent}_{res}'
+base_dir = f'./ScHiCNet/Training/DataFull_{cell_line}_cell{cell_no}_{percent}_{res}'
 full_dir = os.path.join(base_dir, 'Full_Mats')
 pred_root = os.path.join(base_dir, 'Preds')
 
@@ -145,7 +146,8 @@ for chr_id in chromosomes:
     plt.tight_layout(rect=[0, 0, 1, 0.96])
 
     if save_fig:
-        save_dir = f"/home/Work_Project/ScHiCNet/All_models/{cell_line}_cell{cell_no}_{percent}"
+        # save_dir = f"/home/Work_Project/ScHiCNet/All_models/{cell_line}_cell{cell_no}_{percent}"
+        save_dir = f'./ScHiCNet/All_models/{cell_line}_cell{cell_no}_{percent}'
         os.makedirs(save_dir, exist_ok=True)
         fig_name = f"chr{chr_id}_{res}_piece{block_size}_all_models.png"
         fig_path = os.path.join(save_dir, fig_name)
@@ -154,3 +156,4 @@ for chr_id in chromosomes:
         plt.close(fig)
     else:
         plt.show()
+
