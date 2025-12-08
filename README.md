@@ -1,4 +1,4 @@
-# ScHiCNet ScHiCNet: A Multi-Scale Feature-Guided Attention Framework for Enhancing Single-Cell Hi-C Data
+# ScHiCNet: A Multi-Scale Feature-Guided Attention Framework for Enhancing Single-Cell Hi-C Data
 ScHiCNet is a deep learning model designed to enhance the resolution and accuracy of single-cell Hi-C data for studying chromatin interactions.
 
 ## Summary
