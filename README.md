@@ -49,19 +49,18 @@ conda env create -f schicnet_cu126.yml
 
 # 3. Activate the environment
 conda activate schicnet_cu126
+```
 
-## Project Structure
+📂 Project Structure
 
 The directory structure of ScHiCNet is organized as follows:
-
-```text
 ScHiCNet/
-├── Models/       # Source code for ScHiCNet model 
-├── ProcessData/  # Scripts for data preprocessing
-├── Training/     # Main training scripts (contains schicnet_train.py)
-├── Utils/        # Utility functions for data loading, metrics, and visualization
-└── experi/       # Configuration files and scripts for specific experiments
-```
+├── Models/       # Source code for ScHiCNet and baseline models (e.g., ScHiCAtt, DeepHiC)
+├── ProcessData/  # Scripts for data preprocessing and tensor generation
+├── Training/     # Main training scripts (entry point: schicnet_train.py)
+├── Utils/        # Utility functions for metrics (SSIM, GenomeDISCO), loss, and I/O
+├── experi/       # Configuration scripts for batch experiments
+└── Output/       # Scripts for visualization and result extraction
 
 ## 📖 Data Preparation
 
@@ -76,12 +75,12 @@ The datasets used in our paper can be downloaded from:
 
 ## Running ScHiCNet
 
-~~~bash
+```bash
 Step 1: Navigate to the project directory.
 cd ./Training
 Step 2: Training your data.
 python schicnet_train.py
-~~~
+```
 **Arguments:**
 
 * `-b` (`--batch_size`): Batch size for training (e.g., 16).
