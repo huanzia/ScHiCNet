@@ -51,9 +51,11 @@ conda env create -f schicnet_cu126.yml
 conda activate schicnet_cu126
 ```
 
-📂 Project Structure
+## 📂 Project Structure
 
 The directory structure of ScHiCNet is organized as follows:
+
+```text
 ScHiCNet/
 ├── Models/       # Source code for ScHiCNet and baseline models (e.g., ScHiCAtt, DeepHiC)
 ├── ProcessData/  # Scripts for data preprocessing and tensor generation
