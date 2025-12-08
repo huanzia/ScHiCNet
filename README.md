@@ -63,6 +63,7 @@ ScHiCNet/
 ├── Utils/        # Utility functions for metrics (SSIM, GenomeDISCO), loss, and I/O
 ├── experi/       # Configuration scripts for batch experiments
 └── Output/       # Scripts for visualization and result extraction
+```
 
 ## 📖 Data Preparation
 
