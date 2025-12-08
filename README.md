@@ -11,7 +11,7 @@
 It outperforms existing methods in terms of:
 - **Structural Similarity (SSIM)**
 - **Peak Signal-to-Noise Ratio (PSNR)**
-- **Biological Reproducibility (HiCRep, GenomeDISCO)**
+- **Biological Reproducibility (HiCRep)**
 - **Cross-species Generalization** (Robust performance across Human, Mouse, and Drosophila)
 
 The architecture diagram of ScHiCNet is shown below:
