@@ -69,11 +69,18 @@ ScHiCNet/
 
 ScHiCNet accepts Hi-C data in **`.mcool`** format (multiresolution cooler files).
 
+
 ### Public Datasets
 The datasets used in our paper can be downloaded from:
 - **Drosophila**: [GSE131811](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131811)
 - **Human**: [GSE130711](https://salkinstitute.app.box.com/s/fp63a4j36m5k255dhje3zcj5kfuzkyj1)
 - **Mouse**: [GSE162511](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE162511)
+> **⚠️ File Format Check:**
+> Please ensure your data files have the **`.mcool`** extension. If you downloaded single-resolution **`.cool`** files, you must generate the required multi-resolution format using the following command:
+>
+> ```bash
+> cooler zoomify --balance filename.cool
+> ```
 
 
 ## Running ScHiCNet
@@ -91,3 +98,12 @@ python schicnet_train.py
 * `-n` (`--cell_number`): The specific cell index or ID to process(e.g.,1).
 * `-e` (`--epochs`): Total number of training epochs(e.g.,300).
 * `-p` (`--percent`): The sampling ratio(e.g.,0.75,0.45,0.1).
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contact
+
+For any questions or issues, please open an issue on GitHub or contact:
+- **Yu Chen**: nefu_chenyu@nefu.edu.cn
